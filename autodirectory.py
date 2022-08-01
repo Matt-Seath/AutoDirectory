@@ -2,6 +2,16 @@ import os
 import datetime
 import shutil
 
+"""
+
+    THIS SCRIPT IS DESIGNED TO MAKE SORTING FILES EASIER BY
+    ITERATING OVER EVERY FILE/DIRECTORY (NON-RECURSIVE) IN
+    A GIVEN DIRECTORY, IDENTIFYING THE TYPE OF EACH FILE
+    BY COMPARING ITS EXTENSION, RENAMING THAT FILE IF NEEDED,
+    BEFORE FINALLY MOVING IT INTO ITS RESPECTIVE DIRECTORY
+    BASED ON THAT FILETYPE.
+
+"""
 
 # Directory to be sorted
 PATH = "C://Users//Matt//Downloads"
@@ -56,29 +66,33 @@ def check_subfiles(dir_path):
 def rename_image(file_path, extension):
     filename = 0
     # Search Image directory for file with largest integer value. The image
-    # file wil be renamed +1 greater
+    # file wil be renamed to that value + 1
     for file in os.listdir(IMAGE):
+        # Non integer files in target directory are ignored
         try:
             stripped_file = int(os.path.splitext(file)[0])
         except:
             print(f"Unable to cast {file} to integer")
         if filename <= stripped_file:
             filename = stripped_file
+    # Rename the image file
     new_filename = str(filename + 1) + extension
     new_file_path = os.path.join(PATH, new_filename)
     os.rename(file_path, new_file_path)
     return new_filename, new_file_path
 
+# Append an integer to the end of the filename
+
 
 def rename_file(file_path, filename, file_destination):
     counter = 1
-    file_copy = filename
     file = os.path.splitext(filename)[0]
     extension = os.path.splitext(filename)[1]
+    # Increment the integer until the filename is unique
     while filename in os.listdir(file_destination):
-        filename = file_copy
         filename = file + "(" + str(counter) + ")" + extension
         counter += 1
+    # Change the filename
     new_file_path = os.path.join(PATH, filename)
     os.rename(file_path, new_file_path)
     return filename, new_file_path
@@ -91,34 +105,44 @@ def logger(file_destination, old_filename, new_filename):
     timestamp = now.strftime("%d/%m/%Y, %H:%M:%S")
     event_log = open(PATH_TO_LOG_FILE, "a")
     event_log.write(
-        f"{timestamp}    {file_destination :<20}{old_filename :<20}>>{new_filename :>20}  \n")
+        f"{timestamp}    {file_destination :<20}{old_filename :<29}>>{new_filename :>29}  \n")
     event_log.close()
     print(f"successfully moved {old_filename} to {file_destination}!")
+    return
 
 
 def main():
+    # Iterate over every file in directory
     for filename in os.listdir(PATH):
         extension = os.path.splitext(filename)[1]
         filename_upper = filename.upper()
         file_path = os.path.join(PATH, filename)
+        # If the file is a directory, check its contents for video files
         if not extension:
             file_destination = check_subfiles(file_path)
+        # If the file is not a directory, compare extensions to determine filetype
         else:
             file_destination = globals()[get_filetype(filename_upper)]
 
+        # If the file is an image, it is renamed as a unique
+        # integer in target directory
         if file_destination == IMAGE:
             new_filename, new_file_path = rename_image(file_path, extension)
+        # If the filename already exists in target location, the file is renamed
         elif filename in os.listdir(file_destination):
             new_filename, new_file_path = rename_file(
                 file_path, filename, file_destination)
         else:
             new_file_path = file_path
             new_filename = filename
+        # Attempt to move the file into the target directory and log
+        # the migration if successful
         try:
             shutil.move(new_file_path, file_destination)
             logger(file_destination, filename, new_filename)
         except:
             print(f"Unable to transfer {filename}")
+    return 0
 
 
 if __name__ == "__main__":
