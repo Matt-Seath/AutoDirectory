@@ -12,6 +12,7 @@ DIRECTORY = "F://Directories"
 DOCUMENT = "F://Documents"
 VIDEO = "F://Videos"
 IMAGE = "F://Images"
+MUSIC = "F://Music"
 OTHER = "F://Other"
 
 # Log all movements in a text file
@@ -23,7 +24,8 @@ FILETYPES = {
               ".BMP", ".ICO", "JPEG", ".TIF", "TIFF", ".RAW"),
     "VIDEO": (".MOV", ".MP4", ".AVI", "MKV", ".WMV", ".MPEG-4"),
     "DOCUMENT": (".DOC", ".CSV", ".PPTX", ".TXT", ".XLSX", ".PDF"),
-    "EXECUTABLE": (".EXE", ".WASM", ".PY")
+    "EXECUTABLE": (".EXE", ".WASM", ".PY"),
+    "MUSIC": (".MP3", ".WAV", ".MPEG")
 }
 
 # Compare file extension against common extensions to identify filetype
