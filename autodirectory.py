@@ -69,16 +69,15 @@ def rename_image(file_path, extension):
     os.rename(file_path, new_file_path)
     return new_filename, new_file_path
 
-# TODO
-
 
 def rename_file(file_path, filename, file_destination):
     counter = 1
     file_copy = filename
+    file = os.path.splitext(filename)[0]
+    extension = os.path.splitext(filename)[1]
     while filename in os.listdir(file_destination):
         filename = file_copy
-        filename = os.path.splitext(
-            filename)[0] + "(" + str(counter) + ")" + os.path.splitext(filename)[1]
+        filename = file + "(" + str(counter) + ")" + extension
         counter += 1
     new_file_path = os.path.join(PATH, filename)
     os.rename(file_path, new_file_path)
