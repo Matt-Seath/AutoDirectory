@@ -72,8 +72,11 @@ def rename_image(file_path, extension):
 
 def rename_file(file_path, filename, file_destination):
     counter = 1
+    file_copy = filename
     while filename in os.listdir(file_destination):
-        filename = filename + "(" + str(counter) + ")"
+        filename = file_copy
+        filename = os.path.splitext(
+            filename)[0] + "(" + str(counter) + ")" + os.path.splitext(filename)[1]
         counter += 1
     new_file_path = os.path.join(PATH, filename)
     os.rename(file_path, new_file_path)
