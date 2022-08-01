@@ -26,6 +26,8 @@ FILETYPES = {
     "EXECUTABLE": (".EXE", ".WASM", ".PY")
 }
 
+# Compare file extension against common extensions to identify filetype
+
 
 def get_filetype(filename):
     for filetype in FILETYPES:
@@ -33,6 +35,9 @@ def get_filetype(filename):
             if filename.endswith(extension):
                 return filetype
     return "OTHER"
+
+# Search directory subfiles for video files, if found send directory to
+# the Video directory instead
 
 
 def check_subfiles(dir_path):
@@ -43,10 +48,13 @@ def check_subfiles(dir_path):
                 return VIDEO
     return DIRECTORY
 
+# Rename the image file to a unique integer in ascending order
+
 
 def rename_image(file_path, extension):
     filename = 0
-    # while filename in os.path.splitext(os.listdir(IMAGE))[0]:
+    # Search Image directory for file with largest integer value. The image
+    # file wil be renamed +1 greater
     for file in os.listdir(IMAGE):
         try:
             stripped_file = int(os.path.splitext(file)[0])
@@ -59,6 +67,8 @@ def rename_image(file_path, extension):
     os.rename(file_path, new_file_path)
     return new_filename, new_file_path
 
+# TODO
+
 
 def rename_file(file_path, filename, file_destination):
     counter = 1
@@ -69,19 +79,17 @@ def rename_file(file_path, filename, file_destination):
     os.rename(file_path, new_file_path)
     return filename, new_file_path
 
+# Send information to a .txt file for each file migration
 
-def logger(file_destination, filename, new_filename=None):
+
+def logger(file_destination, old_filename, new_filename):
     now = datetime.datetime.now()
     timestamp = now.strftime("%d/%m/%Y, %H:%M:%S")
     event_log = open(PATH_TO_LOG_FILE, "a")
-    if new_filename:
-        event_log.write(
-            f"{timestamp}    {file_destination :<20}{filename :<20}>>{new_filename :>20}  \n")
-    else:
-        event_log.write(
-            f"{timestamp}    {file_destination :<20}{filename}  \n")
+    event_log.write(
+        f"{timestamp}    {file_destination :<20}{old_filename :<20}>>{new_filename :>20}  \n")
     event_log.close()
-    print(f"successfully moved {filename} to {file_destination}!")
+    print(f"successfully moved {old_filename} to {file_destination}!")
 
 
 def main():
