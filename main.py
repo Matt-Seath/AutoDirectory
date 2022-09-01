@@ -17,24 +17,24 @@ import shutil
 PATH = "C://Users//Matt//Downloads"
 
 # Destination Paths based on file type
-EXECUTABLE = "F://Executables"
-DIRECTORY = "F://Directories"
-DOCUMENT = "F://Documents"
-VIDEO = "F://Videos"
-IMAGE = "F://Images"
-MUSIC = "F://Music"
-OTHER = "F://Other"
+PROGRAM = "A://Programs"
+DIRECTORY = "A://Programs"
+DOCUMENT = "A://Documents"
+VIDEO = "A://Videos"
+IMAGE = "A://Images"
+MUSIC = "A://Music"
+OTHER = "A://Other"
 
 # Log all movements in a text file
-PATH_TO_LOG_FILE = "F://Logs.txt"
+PATH_TO_LOG_FILE = "A://Logs.txt"
 
 # All file extensions included in the sort function
 FILETYPES = {
     "IMAGE": (".JPG", ".PNG", ".AI", ".PSD", ".SVG", ".GIF",
               ".BMP", ".ICO", "JPEG", ".TIF", "TIFF", ".RAW"),
     "VIDEO": (".MOV", ".MP4", ".AVI", "MKV", ".WMV", ".MPEG-4"),
-    "DOCUMENT": (".DOC", ".CSV", ".PPTX", ".TXT", ".XLSX", ".PDF"),
-    "EXECUTABLE": (".EXE", ".WASM", ".PY"),
+    "DOCUMENT": (".DOC", ".CSV", ".PPTX", ".TXT", ".XLSX", ".PDF", ".DOCX"),
+    "PROGRAM": (".EXE", ".WASM", ".PY"),
     "MUSIC": (".MP3", ".WAV", ".MPEG")
 }
 
@@ -69,12 +69,14 @@ def rename_image(file_path, extension):
     # file wil be renamed to that value + 1
     for file in os.listdir(IMAGE):
         # Non integer files in target directory are ignored
-        try:
-            stripped_file = int(os.path.splitext(file)[0])
-        except:
-            print(f"Unable to cast {file} to integer")
-        if filename <= stripped_file:
-            filename = stripped_file
+        if os.path.splitext(file)[1]:
+            stripped_file = 0
+            try:
+                stripped_file = int(os.path.splitext(file)[0])
+            except:
+                print(f"Unable to cast {file} to integer")
+            if filename <= stripped_file:
+                filename = stripped_file
     # Rename the image file
     new_filename = str(filename + 1) + extension
     new_file_path = os.path.join(PATH, new_filename)
