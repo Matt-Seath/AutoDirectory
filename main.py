@@ -1,4 +1,5 @@
 import os
+import sys
 import datetime
 import shutil
 
@@ -14,7 +15,7 @@ import shutil
 """
 
 # Directory to be sorted
-PATH = "C://Users//Matt//Downloads"
+DEFAULT_PATH = "C://Users//Matt//Downloads"
 
 # Destination Paths based on file type
 PROGRAM = "A://Programs"
@@ -63,7 +64,7 @@ def check_subfiles(dir_path):
 # Rename the image file to a unique integer in ascending order
 
 
-def rename_image(file_path, extension):
+def rename_image(file_path, extension, scan_path):
     filename = 0
     # Search Image directory for file with largest integer value. The image
     # file wil be renamed to that value + 1
@@ -79,14 +80,14 @@ def rename_image(file_path, extension):
                 filename = stripped_file
     # Rename the image file
     new_filename = str(filename + 1) + extension
-    new_file_path = os.path.join(PATH, new_filename)
+    new_file_path = os.path.join(scan_path, new_filename)
     os.rename(file_path, new_file_path)
     return new_filename, new_file_path
 
 # Append an integer to the end of the filename
 
 
-def rename_file(file_path, filename, file_destination):
+def rename_file(file_path, filename, file_destination, scan_path):
     counter = 1
     file = os.path.splitext(filename)[0]
     extension = os.path.splitext(filename)[1]
@@ -95,7 +96,7 @@ def rename_file(file_path, filename, file_destination):
         filename = file + "(" + str(counter) + ")" + extension
         counter += 1
     # Change the filename
-    new_file_path = os.path.join(PATH, filename)
+    new_file_path = os.path.join(scan_path, filename)
     os.rename(file_path, new_file_path)
     return filename, new_file_path
 
@@ -114,11 +115,14 @@ def logger(file_destination, old_filename, new_filename):
 
 
 def main():
+    scan_path = sys.argv[1] if len(sys.argv) == 2 else DEFAULT_PATH
+    print(f"Organising files at: {scan_path}")
+
     # Iterate over every file in directory
-    for filename in os.listdir(PATH):
+    for filename in os.listdir(scan_path):
         extension = os.path.splitext(filename)[1]
         filename_upper = filename.upper()
-        file_path = os.path.join(PATH, filename)
+        file_path = os.path.join(scan_path, filename)
         # If the file is a directory, check its contents for video files
         if not extension:
             file_destination = check_subfiles(file_path)
@@ -129,11 +133,11 @@ def main():
         # If the file is an image, it is renamed as a unique
         # integer in target directory
         if file_destination == IMAGE:
-            new_filename, new_file_path = rename_image(file_path, extension)
+            new_filename, new_file_path = rename_image(file_path, extension, scan_path)
         # If the filename already exists in target location, the file is renamed
         elif filename in os.listdir(file_destination):
             new_filename, new_file_path = rename_file(
-                file_path, filename, file_destination)
+                file_path, filename, file_destination, scan_path)
         else:
             new_file_path = file_path
             new_filename = filename
@@ -144,6 +148,7 @@ def main():
             logger(file_destination, filename, new_filename)
         except:
             print(f"Unable to transfer {filename}")
+    print(f"Task finished successfully!")
     return 0
 
 
